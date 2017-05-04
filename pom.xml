@@ -2,12 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>dk.serik.eventmng</groupId>
-	<artifactId>eventmanagement</artifactId>
+	<groupId>dk.serik.events</groupId>
+	<artifactId>events</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.1-SNAPSHOT</version>
 
 	<properties>
+		<maven-compiler-plugin-version>3.6.0</maven-compiler-plugin-version>
+		<maven-war-plugin-version>2.6</maven-war-plugin-version>
 	</properties>
 	
 	<!-- DEPENDENCIES -->
@@ -22,4 +24,29 @@
 		</dependency>
 
 	</dependencies>
+	
+	<build>	
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin-version}</version>
+				<configuration>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin-version}</version>
+			</plugin>
+			
+		</plugins>
+	</build>
 </project>
