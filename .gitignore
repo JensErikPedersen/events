@@ -20,3 +20,4 @@ nb-configuration.xml
 .project
 .settings
 .tern-project
+/bin/
