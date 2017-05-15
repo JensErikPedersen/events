@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -15,7 +17,12 @@ import javax.persistence.TemporalType;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="persons")
+@NamedQueries({
+	@NamedQuery(name = Person.QRY_FINDPERSON_BYUSER, query= "SELECT p FROM Person p WHERE userId=:id")
+	
+})
 public class Person implements Serializable{
+	public static final String QRY_FINDPERSON_BYUSER = "Person.findByUser";
 	@Id
 	private long id;
 	
