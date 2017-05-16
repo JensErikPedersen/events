@@ -16,44 +16,43 @@ import javax.persistence.TemporalType;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name="persons")
+@Table(name = "persons")
 @NamedQueries({
-	@NamedQuery(name = Person.QRY_FINDPERSON_BYUSER, query= "SELECT p FROM Person p WHERE userId=:id")
-	
+		@NamedQuery(name = Person.QRY_FINDPERSON_BYUSER, query = "SELECT p FROM Person p WHERE userId=:id")
+
 })
-public class Person implements Serializable{
+public class Person implements Serializable {
 	public static final String QRY_FINDPERSON_BYUSER = "Person.findByUser";
 	@Id
 	private long id;
-	
-	@Column(name="last_name")
+
+	@Column(name = "last_name")
 	private String lastName;
-	
-	@Column(name="first_name")
+
+	@Column(name = "first_name")
 	private String firstName;
-	
-	@Column(name="userid")
+
+	@Column(name = "userid", unique = true)
 	private String userId;
-	
-	@Column(name="email")
+
+	@Column(name = "email")
 	private String email;
-	
-	@Column(name="mobile_phone")
+
+	@Column(name = "mobile_phone")
 	private String mobilePhone;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modified;
-	
-	
+
 	@PrePersist
 	private void prePersist() {
 		created = new Date();
 		modified = new Date();
 	}
-	
+
 	@PreUpdate
 	private void preUpdate() {
 		modified = new Date();
@@ -122,6 +121,6 @@ public class Person implements Serializable{
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-	
+
 	// CRUD operations
 }
