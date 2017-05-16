@@ -7,4 +7,5 @@ public class MySqlSystemException extends RuntimeException {
     public MySqlSystemException(String msg, Exception cause) {
 	super(msg, cause);
     }
+
 }
