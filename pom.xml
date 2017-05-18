@@ -8,6 +8,7 @@
 	<version>1.0.1-SNAPSHOT</version>
 
 	<properties>
+		<apache-commons-versions>3.5</apache-commons-versions>
 		<logback-version>1.1.7</logback-version>
 		<maven-compiler-plugin-version>3.6.0</maven-compiler-plugin-version>
 		<maven-war-plugin-version>2.6</maven-war-plugin-version>
@@ -37,6 +38,13 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback-version}</version>
+		</dependency>
+		
+		<!-- APACHE COMMONS -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache-commons-versions}</version>
 		</dependency>
 	</dependencies>
 	

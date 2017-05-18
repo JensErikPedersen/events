@@ -35,7 +35,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Person implements Serializable {
     public static final String QRY_FINDPERSON_BYUSER = "Person.findByUser";
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private long id;
 
     @Column(name = "last_name")

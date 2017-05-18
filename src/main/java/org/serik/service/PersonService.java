@@ -11,6 +11,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.QueryTimeoutException;
 import javax.persistence.TypedQuery;
 
@@ -45,6 +46,12 @@ public class PersonService {
 	    return person;
 	} catch (EntityExistsException e) {
 	    throw new SqlException("Person with user id: " + person.getId() + " already exists in database", e);
+	} catch (PersistenceException e) {
+	    logger.error("Exception catched: " + e);
+	    for (Throwable t = e.getCause(); t != null; t = t.getCause()) {
+		logger.info("Exception:" + t);
+	    }
+	    throw new SqlException(e.getMessage(), e);
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);
 	    throw new SqlException("Exception occured while creating Person with user id: " + person.getId(), e);
@@ -55,7 +62,7 @@ public class PersonService {
 	return em.find(Person.class, id);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    // @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Person findPersonByUserId(String userid) {
 	logger.info("userid to find: " + userid);
 	try {
@@ -73,5 +80,10 @@ public class PersonService {
 	    logger.error(e.getMessage(), e);
 	    throw new SqlException("Exception occured while retrieving Person with user: " + userid, e);
 	}
+    }
+
+    public Person update(Person person) {
+	Person p = em.merge(person);
+	return p;
     }
 }

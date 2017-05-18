@@ -17,27 +17,26 @@ import org.slf4j.Logger;
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
-	@Inject
-	private Logger logger;
-	@Context
-	private HttpHeaders headers;
+    @Inject
+    private Logger logger;
+    @Context
+    private HttpHeaders headers;
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Response toResponse(ConstraintViolationException e) {
-		logger.info("BeanValidation exception mapper called");
-		AppExceptionEnvelope env = new AppExceptionEnvelope(10, "Validation Failed", "BeanValidation not passed");
-		Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-		for (ConstraintViolation violation : violations) {
-			ValidationExceptionEnvelope vError = new ValidationExceptionEnvelope();
-			vError.setField(violation.getPropertyPath().toString());
-			vError.setMessage(violation.getMessage());
-			env.addValidationError(vError);
-		}
-
-		return Response.status(Status.BAD_REQUEST)
-				.entity(env)
-				.type(headers.getMediaType())
-				.build();
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Response toResponse(ConstraintViolationException e) {
+	logger.info("BeanValidation exception mapper called");
+	AppExceptionEnvelope env = new AppExceptionEnvelope(10, "Validation Failed", "BeanValidation not passed");
+	Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+	for (ConstraintViolation violation : violations) {
+	    ValidationExceptionEnvelope vError = new ValidationExceptionEnvelope();
+	    vError.setField(violation.getPropertyPath().toString());
+	    vError.setMessage(violation.getRootBeanClass().getSimpleName() + "." + violation.getPropertyPath() + " "
+		    + violation.getMessage());
+	    // vError.setMessage(violation.getMessage());
+	    env.addValidationError(vError);
 	}
+
+	return Response.status(Status.BAD_REQUEST).entity(env).type(headers.getMediaType()).build();
+    }
 }
