@@ -1,6 +1,9 @@
 package org.serik.service;
 
-import javax.ejb.Local;
+import java.util.List;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -9,6 +12,7 @@ import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
@@ -28,7 +32,6 @@ import org.slf4j.Logger;
  */
 
 @Stateless
-@Local
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PersonService {
@@ -58,11 +61,13 @@ public class PersonService {
 	}
     }
 
+    @Lock(LockType.READ)
     public Person findPersonById(long id) {
 	return em.find(Person.class, id);
     }
 
     // @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Lock(LockType.READ)
     public Person findPersonByUserId(String userid) {
 	logger.info("userid to find: " + userid);
 	try {
@@ -82,8 +87,43 @@ public class PersonService {
 	}
     }
 
+    @Lock(LockType.READ)
+    public List<Person> findAllPersons(int maxResult) {
+	try {
+	    TypedQuery<Person> q = em.createNamedQuery(Person.QRY_FINDALLPERSONS, Person.class);
+	    return q.setMaxResults(maxResult).getResultList();
+	} catch (QueryTimeoutException e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("List of Persons could not be found due to timeout", e);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Exception occured while retrieving Person List", e);
+	}
+
+    }
+
     public Person update(Person person) {
 	Person p = em.merge(person);
+	em.flush(); // without these next two steps, the updated entity is not
+		    // returned from the database. However, there is an extra
+	em.refresh(p);
 	return p;
+    }
+
+    public void delete(Person person) {
+	em.remove(em.merge(person));
+    }
+
+    public void delete(long id) {
+	try {
+	    Person p = em.getReference(Person.class, id);
+	    em.remove(p);
+	} catch (EntityNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Person with id " + id + " could not be found", e);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Exception occured while deleting Person", e);
+	}
     }
 }
