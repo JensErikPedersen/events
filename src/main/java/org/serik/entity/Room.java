@@ -1,17 +1,41 @@
 package org.serik.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.serik.validator.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "rooms")
+@NamedQueries({
+	@NamedQuery(name = Room.QRY_FINDROOM_BYNAME, query = "SELECT r FROM Room r WHERE r.name=:name"),
+	@NamedQuery(name = Room.QRY_FINDALLROOMS, query = "SELECT r FROM Room r ORDER BY r.id")
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
 public class Room {
+    public final static String QRY_FINDALLROOMS = "Room.findAllRooms";
+    public final static String QRY_FINDROOM_BYNAME = "Room.findByName";
+
+    @Transient
+    private static final Logger logger = LoggerFactory.getLogger(Room.class);
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,6 +51,9 @@ public class Room {
     @NotEmpty
     @Column(name = "max_participants")
     private int maxParticipants;
+
+    @OneToMany(mappedBy = "room")
+    private Set<EventType> eventTypes;
 
     public long getId() {
 	return id;
@@ -58,6 +85,14 @@ public class Room {
 
     public void setMaxParticipants(int maxParticipants) {
 	this.maxParticipants = maxParticipants;
+    }
+
+    public Set<EventType> getEventTypes() {
+	return eventTypes;
+    }
+
+    public void setEventTypes(Set<EventType> eventTypes) {
+	this.eventTypes = eventTypes;
     }
 
 }

@@ -76,7 +76,7 @@ public class PersonService {
 	    return q.getSingleResult();
 	} catch (NoResultException e) {
 	    logger.error(e.getMessage());
-	    throw new SqlException("No Person where found with user id: " + userid, e);
+	    throw new SqlException("No Person were found with user id: " + userid, e);
 	} catch (QueryTimeoutException e) {
 	    logger.error(e.getMessage(), e);
 	    throw new SqlException(
