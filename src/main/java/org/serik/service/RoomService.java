@@ -2,8 +2,6 @@ package org.serik.service;
 
 import java.util.List;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -25,7 +23,7 @@ import org.slf4j.Logger;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RoomService {
     @PersistenceContext(unitName = "EventsManager")
     private EntityManager em;
@@ -33,12 +31,10 @@ public class RoomService {
     @Inject
     private Logger logger;
 
-    @Lock(LockType.READ)
     public Room findRoomById(long id) {
 	return em.find(Room.class, id);
     }
 
-    @Lock(LockType.READ)
     public Room findRoomByName(String name) {
 	try {
 	    TypedQuery<Room> q = em.createNamedQuery(Room.QRY_FINDROOM_BYNAME, Room.class);
@@ -57,13 +53,20 @@ public class RoomService {
 	}
     }
 
-    @Lock(LockType.READ)
     public List<Room> findAllRooms(int maxResults) {
 	try {
 	    TypedQuery<Room> q = em.createNamedQuery(Room.QRY_FINDALLROOMS, Room.class);
 	    List<Room> rooms = q.setMaxResults(maxResults).getResultList();
-	    logger.info("Found rooms: " + rooms.size());
-	    rooms.forEach(r -> logger.info("Room: " + r.getName()));
+	    // logger.info("Found rooms: " + rooms.size());
+	    // rooms.forEach(r -> logger.info("Room: " + r.getName()));
+	    // for (Room r : rooms) {
+	    // logger.info("Room: " + r.getName());
+	    // Set<EventType> eventtypes = r.getEventTypes();
+	    // for (EventType e : eventtypes) {
+	    // logger.info("EventType: " + e.getName());
+	    // }
+	    //
+	    // }
 	    return rooms;
 	} catch (QueryTimeoutException e) {
 	    logger.error(e.getMessage(), e);

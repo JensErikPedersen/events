@@ -1,7 +1,5 @@
 package org.serik.entity;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -29,6 +26,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
+// @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
+// property = "@id")
 public class Room {
     public final static String QRY_FINDALLROOMS = "Room.findAllRooms";
     public final static String QRY_FINDROOM_BYNAME = "Room.findByName";
@@ -52,8 +51,9 @@ public class Room {
     @Column(name = "max_participants")
     private int maxParticipants;
 
-    @OneToMany(mappedBy = "room")
-    private Set<EventType> eventTypes;
+    // // @JsonIgnore
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // private Set<EventType> eventTypes;
 
     public long getId() {
 	return id;
@@ -75,6 +75,28 @@ public class Room {
 	return location;
     }
 
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + (int) (id ^ (id >>> 32));
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Room other = (Room) obj;
+	if (id != other.id)
+	    return false;
+	return true;
+    }
+
     public void setLocation(String location) {
 	this.location = location;
     }
@@ -87,12 +109,12 @@ public class Room {
 	this.maxParticipants = maxParticipants;
     }
 
-    public Set<EventType> getEventTypes() {
-	return eventTypes;
-    }
-
-    public void setEventTypes(Set<EventType> eventTypes) {
-	this.eventTypes = eventTypes;
-    }
+    // public Set<EventType> getEventTypes() {
+    // return eventTypes;
+    // }
+    //
+    // public void setEventTypes(Set<EventType> eventTypes) {
+    // this.eventTypes = eventTypes;
+    // }
 
 }

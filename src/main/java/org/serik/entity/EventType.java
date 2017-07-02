@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -12,11 +13,19 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Entity
 @Table(name = "event_types")
 @NamedQueries({
 	@NamedQuery(name = EventType.QRY_FINDALL_EVENTTYPES, query = "SELECT e FROM EventType e ORDER BY e.name")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
+// @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
+// property = "@id")
 public class EventType {
     public static final String QRY_FINDALL_EVENTTYPES = "EventType.findAllEventTypes";
 
@@ -40,6 +49,7 @@ public class EventType {
     private boolean waitingList;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
     private Room room;
 
     // GETTERS AND SETTERS
@@ -90,6 +100,28 @@ public class EventType {
 
     public void setRoom(Room room) {
 	this.room = room;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + (int) (id ^ (id >>> 32));
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	EventType other = (EventType) obj;
+	if (id != other.id)
+	    return false;
+	return true;
     }
 
 }
