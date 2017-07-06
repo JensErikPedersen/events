@@ -8,8 +8,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.QueryTimeoutException;
 import javax.persistence.TypedQuery;
 
@@ -39,6 +41,26 @@ public class EventTypeService {
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);
 	    throw new SqlException("Exception occured while retrieving EventType List", e);
+	}
+    }
+
+    public EventType create(EventType eventtype) {
+	if (eventtype.getRoom() == null) {
+	    throw new IllegalArgumentException("EventType has not a Room attached");
+	}
+	try {
+	    em.persist(eventtype);
+	    em.flush();
+	    em.refresh(eventtype);
+	    return eventtype;
+	} catch (EntityExistsException e) {
+	    throw new SqlException("EventType with name: " + eventtype.getName() + " already exists in database", e);
+	} catch (PersistenceException e) {
+	    logger.error("Exception catched: " + e);
+	    throw new SqlException(e.getMessage(), e);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Exception occured while creating EventType with name: " + eventtype.getName(), e);
 	}
     }
 }

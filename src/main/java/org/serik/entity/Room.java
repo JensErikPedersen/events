@@ -9,6 +9,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 
 import org.serik.validator.NotEmpty;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class Room {
     @Column(name = "location", length = 20)
     private String location;
 
-    @NotEmpty
+    @Min(1)
     @Column(name = "max_participants")
     private int maxParticipants;
 

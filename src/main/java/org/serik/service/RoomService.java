@@ -57,16 +57,6 @@ public class RoomService {
 	try {
 	    TypedQuery<Room> q = em.createNamedQuery(Room.QRY_FINDALLROOMS, Room.class);
 	    List<Room> rooms = q.setMaxResults(maxResults).getResultList();
-	    // logger.info("Found rooms: " + rooms.size());
-	    // rooms.forEach(r -> logger.info("Room: " + r.getName()));
-	    // for (Room r : rooms) {
-	    // logger.info("Room: " + r.getName());
-	    // Set<EventType> eventtypes = r.getEventTypes();
-	    // for (EventType e : eventtypes) {
-	    // logger.info("EventType: " + e.getName());
-	    // }
-	    //
-	    // }
 	    return rooms;
 	} catch (QueryTimeoutException e) {
 	    logger.error(e.getMessage(), e);
@@ -87,9 +77,9 @@ public class RoomService {
 	    throw new SqlException("Room with name: " + room.getName() + " already exists in database", e);
 	} catch (PersistenceException e) {
 	    logger.error("Exception catched: " + e);
-	    for (Throwable t = e.getCause(); t != null; t = t.getCause()) {
-		logger.info("Exception:" + t);
-	    }
+	    // for (Throwable t = e.getCause(); t != null; t = t.getCause()) {
+	    // logger.info("Exception:" + t);
+	    // }
 	    throw new SqlException(e.getMessage(), e);
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);

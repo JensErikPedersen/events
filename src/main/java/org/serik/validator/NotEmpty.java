@@ -25,4 +25,6 @@ public @interface NotEmpty {
 
     Class<? extends Payload>[] payload() default {};
 
+    String label() default "";
+
 }
