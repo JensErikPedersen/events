@@ -10,6 +10,7 @@ import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.QueryTimeoutException;
@@ -44,6 +45,43 @@ public class EventTypeService {
 	}
     }
 
+    public EventType findEventTypeByName(String name) {
+	try {
+	    TypedQuery<EventType> q = em.createNamedQuery(EventType.QRY_FIND_EVENTTYPE_BY_NAME, EventType.class);
+	    q.setParameter("name", name);
+	    return q.getSingleResult();
+
+	} catch (NoResultException e) {
+	    logger.error(e.getMessage());
+	    throw new SqlException("No EventType were found with name: " + name, e);
+	} catch (QueryTimeoutException e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Finding the EventType with name " + name + " could not be performed due to timeout",
+		    e);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Exception occured while retrieving EventType with name: " + name, e);
+	}
+    }
+
+    public EventType findEventTypeByPrefix(String prefix) {
+	try {
+	    TypedQuery<EventType> q = em.createNamedQuery(EventType.QRY_FIND_EVENTTYPE_BY_PREFIX, EventType.class);
+	    q.setParameter("prefix", prefix);
+	    return q.getSingleResult();
+	} catch (NoResultException e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("No EventType were found with prefix: " + prefix, e);
+	} catch (QueryTimeoutException e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException(
+		    "Find the EventType with prefix: " + prefix + " could not be performed due to timeout", e);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    throw new SqlException("Exception occured while retrieving EventType with prefix: " + prefix, e);
+	}
+    }
+
     public EventType create(EventType eventtype) {
 	if (eventtype.getRoom() == null) {
 	    throw new IllegalArgumentException("EventType has not a Room attached");
@@ -62,5 +100,20 @@ public class EventTypeService {
 	    logger.error(e.getMessage(), e);
 	    throw new SqlException("Exception occured while creating EventType with name: " + eventtype.getName(), e);
 	}
+    }
+
+    public EventType update(EventType eventtype) {
+	if (eventtype.getRoom() == null) {
+	    throw new IllegalArgumentException("EventType has not a Room attached");
+	}
+
+	EventType evt = em.merge(eventtype);
+	em.flush();
+	em.refresh(evt);
+	return evt;
+    }
+
+    public void delete(EventType eventtype) {
+	em.remove(em.merge(eventtype));
     }
 }

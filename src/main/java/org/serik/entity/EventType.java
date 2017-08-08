@@ -20,14 +20,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Entity
 @Table(name = "event_types")
 @NamedQueries({
-	@NamedQuery(name = EventType.QRY_FINDALL_EVENTTYPES, query = "SELECT e FROM EventType e ORDER BY e.name")
-})
+	@NamedQuery(name = EventType.QRY_FINDALL_EVENTTYPES, query = "SELECT e FROM EventType e ORDER BY e.name"),
+	@NamedQuery(name = EventType.QRY_FIND_EVENTTYPE_BY_NAME, query = "SELECT e FROM EventType e WHERE e.name=:name"),
+	@NamedQuery(name = EventType.QRY_FIND_EVENTTYPE_BY_PREFIX, query = "SELECT e FROM EventType e WHERE e.prefix=:prefix") })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
 // @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
 // property = "@id")
 public class EventType {
     public static final String QRY_FINDALL_EVENTTYPES = "EventType.findAllEventTypes";
+    public static final String QRY_FIND_EVENTTYPE_BY_NAME = "EventType.findEventTypeByName";
+    public static final String QRY_FIND_EVENTTYPE_BY_PREFIX = "EventType.findEventTypeByPrefix";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
