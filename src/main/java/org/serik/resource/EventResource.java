@@ -9,8 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.serik.entity.Event;
-import org.serik.facade.EventFacade;
 import org.serik.interceptor.Auditable;
+import org.serik.service.EventService;
 import org.slf4j.Logger;
 
 @Path("events")
@@ -20,7 +20,7 @@ public class EventResource {
     private Logger logger;
 
     @Inject
-    private EventFacade facade;
+    private EventService facade;
 
     @GET
     @Path("{id}")
