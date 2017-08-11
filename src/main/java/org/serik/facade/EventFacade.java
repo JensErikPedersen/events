@@ -7,6 +7,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 
+import org.serik.entity.Event;
 import org.serik.service.EventService;
 import org.slf4j.Logger;
 
@@ -19,4 +20,8 @@ public class EventFacade {
 
     @Inject
     private Logger logger;
+
+    public Event findById(long id) {
+	return service.findById(id);
+    }
 }

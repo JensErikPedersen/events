@@ -21,7 +21,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany
+    @ManyToOne
     private EventType eventtype;
 
     @Column(name = "start_datetime", nullable = false)
@@ -32,7 +32,7 @@ public class Event {
     @Temporal(TemporalType.DATE)
     private Date endDateTime;
 
-    @OneToMany
+    @ManyToOne
     private Person instructor;
 
     @ManyToOne
